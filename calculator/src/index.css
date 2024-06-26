@@ -1,0 +1,28 @@
+body {
+  background: #212529;
+  margin: 0;
+}
+
+#root-div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #212529;
+  width: 100%;
+  min-height: 100vh;
+}
+
+
+/* calculator div */
+#calculator-div {
+  width: 450px;
+  height: 600px;
+  background: #343a40;
+}
+
+  #calculator-display {
+    width: 80%;
+    height: 10%;
+    background: red;
+  }
+
