@@ -1,6 +1,6 @@
 body {
-  background: #212529;
   margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 #root-div {
@@ -15,14 +15,188 @@ body {
 
 /* calculator div */
 #calculator-div {
-  width: 450px;
-  height: 600px;
-  background: #343a40;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  width: 300px;
+  height: 500px;
+  background: #2c3136;
+  border-radius: 1%;
+  padding: 3em 2em;
+  box-shadow: 0px 3px #191c1f;
 }
 
-  #calculator-display {
-    width: 80%;
-    height: 10%;
-    background: red;
+  #display-div {
+    display: flex;
+    align-items: end;
+    justify-content: end;
+    width: 100%;
+    height: 15%;
+    background: #495057;
+    border-radius: 0.5%;
+    box-shadow: 0px 3px #191c1f;
   }
+
+    #display-text {
+      color: lightgrey;
+      font-size: 2rem;
+      text-align: end;
+      margin: 0 0.25em 0.15em 0;
+    }
+
+  #clear-and-delete-div {
+    display: grid;
+    grid-template-columns: repeat(5,1fr);
+    grid-gap: 0 0.5em;
+    grid-template-areas: 
+      "A A B C D"; 
+    width: 100%;
+    height: 7.5%;
+    margin-top: 0.75em;
+  }
+
+    #delete-button {
+      color: #ffffffc7;
+      background: #FF5E00;
+      border: none;
+      width: 100%;
+      height: 100%;
+      box-shadow: 0px 3px #81390f;
+      font-weight: bold;
+      grid-area: D;
+    }
+
+    #clear-button {
+      grid-area: A;
+      border: none;
+      height: 100%;
+      width: 100%;
+      background: #627691;
+      font-weight: bold;
+      color: #ffffffc7;
+      box-shadow: 0px 3px #455263;
+    }
+
+  #keypad-div {
+    width: 100%;
+    height: 70%;
+    display: grid;
+    grid-gap: 0 0.5em;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-areas:
+    "savedAnswer squareRoot nthRoot openBracket closeBracket" 
+    "seven eight nine divide squared"
+    "four five six multiply percent"
+    "one two three add equals"
+    "zero zero dot subtract equals";
+  }
+
+
+  .keypad-btn { 
+    height: 70%;
+    background: #495057;
+    border: none;
+    border-radius: 2%;
+    box-shadow: 0px 3px #191c1f;
+    margin: 0;
+    color: #ffffffc7;
+  }
+
+    #key-zero {
+      grid-area: zero;
+    }
+
+    #key-one {
+      grid-area: one;
+    }
+
+    #key-two {
+      grid-area: two;
+    }
+    
+    #key-three {
+      grid-area: three;
+    }
+
+    #key-four {
+      grid-area: four;
+    }
+
+    #key-five {
+      grid-area: five;
+    }
+     
+    #key-six {
+      grid-area: six;
+    }
+
+    #key-seven {
+      grid-area: seven;
+    }
+
+    #key-eight {
+      grid-area: eight;
+    }
+
+    #key-nine {
+      grid-area: nine;
+    }
+
+    #key-equals {
+      grid-area: equals;
+    }
+
+    #key-divide {
+      grid-area: divide;
+    }
+
+    #key-multiply {
+      grid-area: multiply;
+    }
+
+    #key-add {
+      grid-area: add;
+    }
+
+    #key-subtract {
+      grid-area: subtract;
+    }
+
+    #key-percent {
+      grid-area: percent;
+    }
+
+    #key-openBracket {
+      grid-area: openBracket; 
+    }
+
+    #key-closeBracket {
+      grid-area: closeBracket;
+    }
+  
+    #key-decimal {
+      grid-area: dot;
+    }
+
+    #key-squareRoot {
+      grid-area: squareRoot;
+    }
+
+    #key-nthRoot {
+      grid-area: nthRoot;
+    }
+
+    #key-equals {
+      grid-area: equals;
+      height: 85%;
+    }
+
+    #key-squared {
+      grid-area: squared;
+    }
+
+    #key-savedAnswer {
+      grid-area: savedAnswer;
+    }
 
