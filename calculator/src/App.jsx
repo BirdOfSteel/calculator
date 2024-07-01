@@ -26,7 +26,7 @@ function App() {
           return [...prevArray, keyText]
         }
       })
-    } else if (["÷","x","+","-","(",")","■","𝑥²","𝑥ʸ","√","∛"].includes(keyText)) {
+    } else if (["÷","x","+","-","(",")","■","%","𝑥²","𝑥ʸ","√","∛"].includes(keyText)) {
         if (equationArray.length === 0 && !["(","■","-","√","∛"].includes(keyText)) {
           console.log("Cannot put symbol at start of equation")
         } 
@@ -65,7 +65,7 @@ function App() {
           setEquationArray((prevArray) => [...prevArray, "."])
         } 
         
-        else if (["÷","x","+","-"].includes(keyText)) {
+        else if (["÷","x","+","-","%"].includes(keyText)) {
           setEquationArray((prevArray) => [...prevArray, keyText])
         } 
         
@@ -105,7 +105,11 @@ function App() {
             break;
 
           case "^":
-              symbol = "**";
+            symbol = "**";
+            break;
+
+          case "%":
+            symbol = "*0.01";
             break;
 
           case "√":
