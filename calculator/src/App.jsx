@@ -1,91 +1,123 @@
-import './index.css'
 import React from 'react'
+import './index.css'
+import Keypad from "./Keypad.jsx"
+import { defaultStyle, lightStyle, highContrastLightStyle, highContrastDarkStyle } from "./styles.jsx"
+
+// LATER:
+// make new styles
+// add font
+// maybe change logo symbols
+// scrollbar for display?
 
 function App() {
   const [equationArray, setEquationArray] = React.useState([])
+  const [styleState, setStyleState] = React.useState(defaultStyle)
 
-  // Keypad buttons are rendered from this list 
-  const characterListArray = [{zero: "0"},{one: "1"},{two: "2"},{three: "3"},{four: "4"},{five: "5"},{six: "6"},{seven: "7"},{eight: "8"},{"nine": "9"},{squareRoot: "√"},{nthRoot: "𝒏√"},{openBracket: "("},{closeBracket: ")"},{divide: "÷"},{squared:"𝑥²"},{multiply: "x"},{percent: "%"},{add:"+"},{subtract: "-"},{decimal: "■"},{equals: "="},{savedAnswer: "ANS"}] 
-
-  function renderKeypadButtons() {
-    const buttonList = characterListArray.map((charObject, index) => {
-      const keyID = Object.keys(charObject)[0]
-      const keyText = Object.values(charObject)[0]
-
-      return (
-        <button key={index} onClick={(event) => { recordEquation(event) } } className="keypad-btn" id={`key-${keyID}`}>{keyText}</button>
-      )
-    })
-
-    return buttonList
-  }
-
-
-  function parseEquationArray(equationArray) {
+  function parseEquationArray() {
     const lastCharacter = equationArray[equationArray.length-1]
-
+    console.log(equationArray)
     if(!isNaN(lastCharacter) || lastCharacter === ")") {
       const equationArrayParsed = equationArray.map((character, index) => {
         let symbol = ""
 
         switch (character) {
-          case "x": symbol = "*";
+          case "x": 
+            symbol = "*";
             break;
-          case "÷": symbol = "/";
+
+          case "÷": 
+            symbol = "/";
             break;
-          case "(": symbol = index != 0 ? "*(" : "("; // turns ( into *( unless it's located at the very start. * is removed to prevent error. 
+
+          case "(": 
+            if (["÷","x","+","-","^"].includes(equationArray[index-1]) || index == 0) {
+              symbol = "(";   // checks if the previous character is a symbol OR if we're on the first index. If either true, returns "(".
+            } else {         // else, put "*(" so that JS knows to multiply by the following numbers.
+              symbol = "*(";
+            }
+            break;
+
+          case "^":
+              symbol = "**"
             break;
         }
 
         console.log(symbol ? symbol : character)
         return symbol ? symbol : character;
       })
+      
+      console.log("equationArrayParsed: " + equationArrayParsed)
 
       const equationAsString = equationArrayParsed.join("")
+      console.log("equationAsString: " + equationAsString)
       const calculateAnswer = new Function(`return ${equationAsString}`)
-
-      setEquationArray([calculateAnswer(equationAsString)])
+      const answerAsArray = Array.from(String([calculateAnswer(equationAsString)]))
+      console.log("equationArray: " + equationArray)
+      setEquationArray(answerAsArray)
     }
   }
-  
+
   function recordEquation(event) {
     const keyText = event.target.innerText;
 
     if (!isNaN(keyText)) {
-      setEquationArray((prevString) => {
-        return [...prevString, keyText]
-      })
-    } else if (["÷","x","+","-","(",")"].includes(keyText)) {
-        if (equationArray.length === 0 && keyText != "(") {
-          console.log("Cannot put symbol at start of equation")
-        } else if (["÷","x","+","-"].includes(equationArray[equationArray.length-1])) {
-          console.log("Cannot put symbol after a symbol")
-          console.log(equationArray)
+      setEquationArray((prevArray) => {
+        if(prevArray[prevArray.length-1] === ")") { // checks if the character before this one is a closed bracket. If true, it adds a multiplier symbol before adding the pressed number.
+          return [...prevArray, "x", keyText] 
         } else {
-          console.log("else ran")
-          setEquationArray((prevString) => {
-            console.log(...prevString, keyText)
-            return [...prevString, keyText]
+          return [...prevArray, keyText]
+        }
+      })
+    } else if (["÷","x","+","-","(",")","■","𝑥²","𝑥ʸ"].includes(keyText)) {
+        if (equationArray.length === 0 && !["(","■","-"].includes(keyText)) {
+          console.log("Cannot put symbol at start of equation")
+        } else if (keyText === "(" || keyText === ")") {
+          setEquationArray((prevArray) => [...prevArray, ...keyText])
+        } else if (["÷"].includes(equationArray[equationArray.length-1])) { // review if this statement is necessary
+            console.log("testing: " + equationArray[equationArray.length-1])
+            console.log("Cannot put symbol after a symbol")
+            console.log(equationArray)
+        } else if (keyText === "𝑥²") {
+          setEquationArray((prevArray) => {
+            console.log([...prevArray, ...["^","(","2",")"]])
+            return [...prevArray, ...["^","(","2",")"]]
           })
+        } else if (keyText === "𝑥ʸ") {
+          setEquationArray((prevArray) => {
+            console.log([...prevArray, ...["^","("]])
+            return [...prevArray, ...["^","("]]
+          })
+        } else if(keyText === "■") {
+          setEquationArray((prevArray) => [...prevArray, "."])
+        } else if (["÷","x","+","-"].includes(keyText)) {
+          setEquationArray((prevArray) => [...prevArray, keyText])
+        } else {
+          console.log("Else statement ran: " + keyText)
         }
     } else if (keyText == "=") {
-        parseEquationArray(equationArray)
+        parseEquationArray()
+    } else {
+      console.log("else 2 ran: " + keyText)
     }
   }
   
   return (
-    <div id="root-div"> 
-      <div id="calculator-div">
-        <div id="display-div">
-          <p id="display-text">{equationArray}</p>
+    <div id="root-div" style={{backgroundColor: styleState.pageBackground}}> 
+      <div id="theme-header" style={{backgroundColor: styleState.themesBackground}}>
+        <button className="theme-button" onClick={() => setStyleState(defaultStyle)} style={{background: "#191c1f"}}><div class="theme-button-accent" style={{background: "#878c8f"}}></div></button>
+        <button className="theme-button" onClick={() => setStyleState(lightStyle)} style={{background: "#655560"}}><div class="theme-button-accent" style={{background: "#c4cad0"}}></div></button>
+        <button className="theme-button" onClick={() => setStyleState(highContrastLightStyle)} style={{background: "#2d2d2d"}}><div class="theme-button-accent" style={{background: "#fbfbfb"}}></div></button>
+        <button className="theme-button" onClick={() => setStyleState(highContrastDarkStyle)} style={{background: "#ffffff"}}><div class="theme-button-accent" style={{background: "#000000"}}></div></button>
+      </div>
+      <div id="calculator-div" style={{backgroundColor: styleState.calcBackground, boxShadow: styleState.calcBoxShadow}}>
+        <div id="display-div" style={{backgroundColor: styleState.inputBackground, boxShadow: styleState.inputBoxShadow}}>
+          <p id="display-text" style={{color: styleState.textColour}}>{equationArray}</p>
         </div>
-        <div id="clear-and-delete-div">
-          <button onClick={() => setEquationArray([])} id="clear-button">CLEAR</button>
-          <button onClick={() => setEquationArray(prevArray => prevArray.slice(0,-1))} id="delete-button">CE</button>
+        <div id="clear-and-ce-div">
+          <button onClick={() => setEquationArray([])} id="clear-button" style={{background: styleState.clearBackground, boxShadow: styleState.clearBoxShadow, color: styleState.ceAndClearTextColour}}>CLEAR</button>
+          <button onClick={() => setEquationArray(prevArray => prevArray.slice(0,-1))} id="ce-button" style={{background: styleState.ceBackground, boxShadow: styleState.ceBoxShadow, color: styleState.ceAndClearTextColour}}>CE</button>
         </div>
-        <div id="keypad-div">
-          { renderKeypadButtons() }
-        </div>
+        <Keypad recordEquation={recordEquation} styleState={styleState}/>
       </div>
     </div>
   )
