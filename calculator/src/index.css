@@ -116,9 +116,9 @@ body {
   grid-gap: 0 0.5em;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
   grid-template-areas:
-  "squared nthPower squareRoot openBracket closeBracket" 
-  "seven eight nine divide ."
-  "four five six multiply percent"
+  "squared nthPower percent openBracket closeBracket" 
+  "seven eight nine divide squareRoot"
+  "four five six multiply cubeRoot"
   "one two three add equals"
   "zero zero decimal subtract equals";
   margin-bottom: -1.5em;
@@ -133,7 +133,6 @@ body {
     margin: 0;
     color: #e9ecef;
     font-family: inherit;
-    font-weight: bold;
   }
 
     #key-zero {
@@ -214,6 +213,10 @@ body {
 
     #key-squareRoot {
       grid-area: squareRoot;
+    }
+
+    #key-cubeRoot {
+      grid-area: cubeRoot;
     }
 
     #key-nthPower {
