@@ -1,21 +1,27 @@
 import React from 'react'
 import './index.css'
 import Keypad from "./Keypad.jsx"
-import { defaultStyle, lightStyle, highContrastLightStyle, highContrastDarkStyle } from "./styles.jsx"
 
-// TO DO:
-// make new styles
-// add font
-// maybe change logo symbols
-// scrollbar for display?
-// error popup
-// make calculator div responsive.
+import { 
+  defaultStyle, 
+  urbanStyleA, 
+  urbanStyleB, 
+  mutedStyle, 
+  candyflossStyle, 
+  peachStyle, 
+  lightStyle, 
+  highContrastLightStyle, 
+  highContrastDarkStyle 
+} from "./styles.jsx"
 
 function App() {
-  const [equationArray, setEquationArray] = React.useState([])
+  const [equationArray, setEquationArray] = React.useState([]) // holds an array of the characters entered into the calculator
   const [styleState, setStyleState] = React.useState(defaultStyle)
+  const [errorMessage, setErrorMessage] = React.useState(null)
 
-  function recordEquation(event) {
+  const timeoutID = React.useRef(); // holds setTimeout ID for errorMessage
+
+  function addToEquationArray(event) { // this function handles adding characters to equationArray.
     const keyText = event.target.innerText;
 
     if (!isNaN(keyText)) { // if statement runs if the pressed key is a number
@@ -28,29 +34,35 @@ function App() {
       })
     } else if (["÷","x","+","-","(",")","■","%","𝑥²","𝑥ʸ","√","∛"].includes(keyText)) {
         if (equationArray.length === 0 && !["(","■","-","√","∛"].includes(keyText)) {
-          console.log("Cannot put symbol at start of equation")
+          setErrorMessage("Cannot put this symbol at start of equation")
+          
+          clearTimeout(timeoutID.current)
+          timeoutID.current = setTimeout(() => {
+            setErrorMessage(null)
+          },3000)
         } 
 
         else if (keyText === "(" || keyText === ")") {
             setEquationArray((prevArray) => [...prevArray, ...keyText])
         } 
 
-        else if ([].includes(equationArray[equationArray.length-1])) { // review if this statement is necessary
-              console.log("testing: " + equationArray[equationArray.length-1])
-              console.log("Cannot put symbol after a symbol")
-              console.log(equationArray)
+        else if (["÷","x","+","■","%","𝑥²","𝑥ʸ","√","∛"].includes(equationArray[equationArray.length-1])) { // review if this statement is necessary
+          setErrorMessage("Cannot put this symbol after the previous symbol")
+    
+          clearTimeout(timeoutID.current)
+          timeoutID.current = setTimeout(() => {
+            setErrorMessage(null)
+          },3000)
         } 
         
         else if (keyText === "𝑥²") {
           setEquationArray((prevArray) => {
-            console.log([...prevArray, ...["^","(","2",")"]])
             return [...prevArray, ...["^","(","2",")"]]
           })
         } 
         
         else if (keyText === "𝑥ʸ") {
           setEquationArray((prevArray) => {
-            console.log([...prevArray, ...["^","("]])
             return [...prevArray, ...["^","("]]
           })
         } 
@@ -70,24 +82,33 @@ function App() {
         } 
         
         else {
-          console.log("Else statement ran: " + keyText)
+          setErrorMessage("Logic error with handling: " + keyText)
+
+          clearTimeout(timeoutID)
+          timeoutID.current = setTimeout(() => {
+            setErrorMessage(null)
+          },3000)
         }
 
     } else if (keyText == "=") {
         parseEquationArray()
     } else {
-      console.log("else 2 ran: " + keyText)
+      setErrorMessage("Else statement ran - unknown input: " + keyText)
+
+      clearTimeout(timeoutID)
+      timeoutID.current = setTimeout(() => {
+        setErrorMessage(null)
+      },3000)
     }
   }
   
-  function parseEquationArray() {
+  function parseEquationArray() { // parser function runs over the equationArray and converts it into a syntactically correct equation.
     const lastCharacter = equationArray[equationArray.length-1]
-    console.log(equationArray)
     if(!isNaN(lastCharacter) || lastCharacter === ")") {
       const equationArrayParsed = equationArray.map((character, index) => {
         let symbol = ""
 
-        switch (character) {
+        switch (character) { // switch case handles character conversion.
           case "x": 
             symbol = "*";
             break;
@@ -121,38 +142,51 @@ function App() {
             break;
         }
 
-        console.log(symbol ? symbol : character)
         return symbol ? symbol : character;
       })
-      
-      console.log("equationArrayParsed: " + equationArrayParsed)
 
       const equationAsString = equationArrayParsed.join("")
-      console.log("equationAsString: " + equationAsString)
       const calculateAnswer = new Function(`return ${equationAsString}`)
       const answerAsArray = Array.from(String([calculateAnswer(equationAsString)]))
-      console.log("equationArray: " + equationArray)
-      setEquationArray(answerAsArray)
+      // console.log("equationAsString: " + equationAsString)    could be useful for diagnosing bugs later.
+      // console.log("equationArray: " + equationArray)
+      setEquationArray(answerAsArray) // equationArray's stored equation is overwritten with the calculated answer, allowing us to use it straight away. 
     }
   }
 
   return (
-    <div id="root-div" style={{backgroundColor: styleState.pageBackground}}> 
-      <div id="theme-header" style={{backgroundColor: styleState.themesBackground}}>
+    <div id="root-div" style={{background: styleState.pageBackground}}> 
+      <div id="theme-header" style={{background: styleState.themesBackground}}>
         <button className="theme-button" onClick={() => setStyleState(defaultStyle)} style={{background: "#191c1f"}}><div className="theme-button-accent" style={{background: "#878c8f"}}></div></button>
-        <button className="theme-button" onClick={() => setStyleState(lightStyle)} style={{background: "#655560"}}><div className="theme-button-accent" style={{background: "#c4cad0"}}></div></button>
+        <button className="theme-button" onClick={() => setStyleState(urbanStyleA)} style={{background: "#03273c"}}><div className="theme-button-accent" style={{background: "#d1cbc1"}}></div></button>
+        <button className="theme-button" onClick={() => setStyleState(urbanStyleB)} style={{background: "#293241"}}><div className="theme-button-accent" style={{background: "#EE6C4D"}}></div></button>
+        <button className="theme-button" onClick={() => setStyleState(mutedStyle)} style={{background: "#655560"}}><div className="theme-button-accent" style={{background: "#c4cad0"}}></div></button>
+        <button className="theme-button" onClick={() => setStyleState(candyflossStyle)} style={{background: "rgb(147, 156, 255)"}}><div className="theme-button-accent" style={{background: "rgb(224, 198, 255)"}}></div></button>
+        <button className="theme-button" onClick={() => setStyleState(peachStyle)} style={{background: "#F08080"}}><div className="theme-button-accent" style={{background: "#FFDAB9"}}></div></button>
+        <button className="theme-button" onClick={() => setStyleState(lightStyle)} style={{background: "rgb(198, 198, 198)"}}><div className="theme-button-accent" style={{background: "#f2f2f2"}}></div></button>
         <button className="theme-button" onClick={() => setStyleState(highContrastLightStyle)} style={{background: "#2d2d2d"}}><div className="theme-button-accent" style={{background: "#fbfbfb"}}></div></button>
-        <button className="theme-button" onClick={() => setStyleState(highContrastDarkStyle)} style={{background: "#ffffff"}}><div className="theme-button-accent" style={{background: "#000000"}}></div></button>
+        <button className="theme-button" onClick={() => setStyleState(highContrastDarkStyle)} style={{background: "#000000"}}><div className="theme-button-accent" style={{background: "#ffffff"}}></div></button>
       </div>
-      <div id="calculator-div" style={{backgroundColor: styleState.calcBackground, boxShadow: styleState.calcBoxShadow}}>
-        <div id="display-div" style={{backgroundColor: styleState.inputBackground, boxShadow: styleState.inputBoxShadow}}>
-          <p id="display-text" style={{color: styleState.textColour}}>{equationArray}</p>
+      <div id="error-and-calculator-div">
+        {
+          errorMessage ? 
+          <div id="error-div" style={{border: `1px solid ${styleState.textColour}`}}>
+            <p id="error-text" style={{color: styleState.textColour}}>{errorMessage}</p>
+          </div>
+            :
+          <div id="error-div-placeholder">
+          </div>
+        }
+        <div id="calculator-div" style={{background: styleState.calcBackground, boxShadow: styleState.calcBoxShadow}}>
+          <div id="display-div" style={{background: styleState.inputBackground, boxShadow: styleState.inputBoxShadow}}>
+            <p id="display-text" style={{color: styleState.textColour}}>{equationArray}</p>
+          </div>
+          <div id="clear-and-ce-div">
+            <button onClick={() => setEquationArray([])} id="clear-button" style={{background: styleState.clearBackground, boxShadow: styleState.clearBoxShadow, color: styleState.ceAndClearTextColour}}>CLEAR</button>
+            <button onClick={() => setEquationArray(prevArray => prevArray.slice(0,-1))} id="ce-button" style={{background: styleState.ceBackground, boxShadow: styleState.ceBoxShadow, color: styleState.ceAndClearTextColour}}>CE</button>
+          </div>
+          <Keypad addToEquationArray={addToEquationArray} equationArray={equationArray} styleState={styleState}/>
         </div>
-        <div id="clear-and-ce-div">
-          <button onClick={() => setEquationArray([])} id="clear-button" style={{background: styleState.clearBackground, boxShadow: styleState.clearBoxShadow, color: styleState.ceAndClearTextColour}}>CLEAR</button>
-          <button onClick={() => setEquationArray(prevArray => prevArray.slice(0,-1))} id="ce-button" style={{background: styleState.ceBackground, boxShadow: styleState.ceBoxShadow, color: styleState.ceAndClearTextColour}}>CE</button>
-        </div>
-        <Keypad recordEquation={recordEquation} styleState={styleState}/>
       </div>
     </div>
   )
