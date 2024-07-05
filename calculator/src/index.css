@@ -19,10 +19,12 @@ body {
 #theme-header {
   display: flex;
   align-items: center;
+  padding: 0.5em 0;
   position: absolute;
   top: 0px;
   height: 5%;
   width: 100%;
+  transition: transform 1s ease-out; 
   /* background: #2c3136; */
 }
 
@@ -40,6 +42,27 @@ body {
     height: 50%;
     width: 100%;
   }
+
+  #themes-menu-button {
+    width: 10%;
+    height: 70%;
+    bottom: -60%;
+    position: absolute;
+    border: 0;
+    font-size: 1.5rem;
+    font-weight: bold;
+    border-bottom-right-radius: 10px;
+  }
+
+
+  .show-themes-header {
+    transform: translateY(0%);
+  }
+
+  .hide-themes-header {
+    transform: translateY(-100%);
+  }
+
 
 /* error-and-calculator-div */
 #error-and-calculator-div {

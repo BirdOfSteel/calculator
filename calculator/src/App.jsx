@@ -17,6 +17,7 @@ import {
 function App() {
   const [equationArray, setEquationArray] = React.useState([]) // holds an array of the characters entered into the calculator
   const [styleState, setStyleState] = React.useState(defaultStyle)
+  const [themesMenuExpanded, setThemesMenuExpanded] = React.useState(true)
   const [errorMessage, setErrorMessage] = React.useState(null)
 
   const timeoutID = React.useRef(); // holds setTimeout ID for errorMessage
@@ -156,7 +157,7 @@ function App() {
 
   return (
     <div id="root-div" style={{background: styleState.pageBackground}}> 
-      <div id="theme-header" style={{background: styleState.themesBackground}}>
+      <div id="theme-header" className={themesMenuExpanded ? "show-themes-header" : "hide-themes-header"} style={{background: styleState.themesBackground}}>
         <button className="theme-button" onClick={() => setStyleState(defaultStyle)} style={{background: "#191c1f"}}><div className="theme-button-accent" style={{background: "#878c8f"}}></div></button>
         <button className="theme-button" onClick={() => setStyleState(urbanStyleA)} style={{background: "#03273c"}}><div className="theme-button-accent" style={{background: "#d1cbc1"}}></div></button>
         <button className="theme-button" onClick={() => setStyleState(urbanStyleB)} style={{background: "#293241"}}><div className="theme-button-accent" style={{background: "#EE6C4D"}}></div></button>
@@ -166,6 +167,7 @@ function App() {
         <button className="theme-button" onClick={() => setStyleState(lightStyle)} style={{background: "rgb(198, 198, 198)"}}><div className="theme-button-accent" style={{background: "#f2f2f2"}}></div></button>
         <button className="theme-button" onClick={() => setStyleState(highContrastLightStyle)} style={{background: "#2d2d2d"}}><div className="theme-button-accent" style={{background: "#fbfbfb"}}></div></button>
         <button className="theme-button" onClick={() => setStyleState(highContrastDarkStyle)} style={{background: "#000000"}}><div className="theme-button-accent" style={{background: "#ffffff"}}></div></button>
+        <button id="themes-menu-button" onClick={() => {setThemesMenuExpanded((prevBoolean) => !prevBoolean)}} style={{background: styleState.themesBackground, color: styleState === highContrastDarkStyle ? "#000000" : "#FFFFFF"}}>{themesMenuExpanded ? "-" : "+"}</button>
       </div>
       <div id="error-and-calculator-div">
         {
