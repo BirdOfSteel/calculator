@@ -1,22 +1,11 @@
 import React from 'react'
 import './index.css'
 import Keypad from "./Keypad.jsx"
-
-import { 
-  defaultStyle, 
-  urbanStyleA, 
-  urbanStyleB, 
-  mutedStyle, 
-  candyflossStyle, 
-  peachStyle, 
-  lightStyle, 
-  highContrastLightStyle, 
-  highContrastDarkStyle 
-} from "./styles.jsx"
+import styleArray from "./styles.jsx"
 
 function App() {
   const [equationArray, setEquationArray] = React.useState([]) // holds an array of the characters entered into the calculator
-  const [styleState, setStyleState] = React.useState(defaultStyle)
+  const [styleState, setStyleState] = React.useState(styleArray[0])
   const [themesMenuExpanded, setThemesMenuExpanded] = React.useState(true)
   const [errorMessage, setErrorMessage] = React.useState(null)
 
@@ -155,19 +144,43 @@ function App() {
     }
   }
 
+    function convertStyleArrayToButtonArray() {
+    const styleArrayToButtonsArray = 
+      styleArray.map((styleObject, index) => {
+        return (
+          <button 
+            key={index}
+            className="theme-button" 
+            onClick={() => setStyleState(styleArray[index])} 
+            style={{background: styleObject.themesBackground}}>
+              <div className="theme-button-accent" style={{background: styleObject.pageBackground}}> 
+              </div>
+          </button>
+        )
+      })
+    
+    return (
+      <>
+        {styleArrayToButtonsArray}
+
+        <button id="themes-menu-button" 
+          onClick={() => {setThemesMenuExpanded((prevBoolean) => !prevBoolean)}} 
+          style={{background: styleState.themesBackground, color: styleState === styleArray[8] ? "#000000" : "#fbfbfb"}}
+        >
+          {themesMenuExpanded ? "-" : "+"}
+        </button>
+      </>
+    )
+  }
+
+
   return (
     <div id="root-div" style={{background: styleState.pageBackground}}> 
       <div id="theme-header" className={themesMenuExpanded ? "show-themes-header" : "hide-themes-header"} style={{background: styleState.themesBackground}}>
-        <button className="theme-button" onClick={() => setStyleState(defaultStyle)} style={{background: "#191c1f"}}><div className="theme-button-accent" style={{background: "#878c8f"}}></div></button>
-        <button className="theme-button" onClick={() => setStyleState(urbanStyleA)} style={{background: "#03273c"}}><div className="theme-button-accent" style={{background: "#d1cbc1"}}></div></button>
-        <button className="theme-button" onClick={() => setStyleState(urbanStyleB)} style={{background: "#293241"}}><div className="theme-button-accent" style={{background: "#EE6C4D"}}></div></button>
-        <button className="theme-button" onClick={() => setStyleState(mutedStyle)} style={{background: "#655560"}}><div className="theme-button-accent" style={{background: "#c4cad0"}}></div></button>
-        <button className="theme-button" onClick={() => setStyleState(candyflossStyle)} style={{background: "rgb(147, 156, 255)"}}><div className="theme-button-accent" style={{background: "rgb(224, 198, 255)"}}></div></button>
-        <button className="theme-button" onClick={() => setStyleState(peachStyle)} style={{background: "#F08080"}}><div className="theme-button-accent" style={{background: "#FFDAB9"}}></div></button>
-        <button className="theme-button" onClick={() => setStyleState(lightStyle)} style={{background: "rgb(198, 198, 198)"}}><div className="theme-button-accent" style={{background: "#f2f2f2"}}></div></button>
-        <button className="theme-button" onClick={() => setStyleState(highContrastLightStyle)} style={{background: "#2d2d2d"}}><div className="theme-button-accent" style={{background: "#fbfbfb"}}></div></button>
-        <button className="theme-button" onClick={() => setStyleState(highContrastDarkStyle)} style={{background: "#000000"}}><div className="theme-button-accent" style={{background: "#ffffff"}}></div></button>
-        <button id="themes-menu-button" onClick={() => {setThemesMenuExpanded((prevBoolean) => !prevBoolean)}} style={{background: styleState.themesBackground, color: styleState === highContrastDarkStyle ? "#000000" : "#FFFFFF"}}>{themesMenuExpanded ? "-" : "+"}</button>
+        {
+          convertStyleArrayToButtonArray()
+        }
+       
       </div>
       <div id="error-and-calculator-div">
         {
